@@ -11,7 +11,7 @@
     "repo": "https://github.com/MenschenToaster/AudioShutdown"
   },
   "license": "MIT",
-  "icon": "assets/AudioShutdown/icon.png",
+  "icon": "assets/audioshutdown/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
