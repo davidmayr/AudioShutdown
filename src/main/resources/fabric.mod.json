@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "audioshutdown",
+  "version": "${version}",
+  "name": "AudioShutdown",
+  "description": "Turns of Minecrafts Audio Engine after not being used for a while",
+  "authors": [
+    "MenschenToaster"
+  ],
+  "contact": {
+    "repo": "https://github.com/MenschenToaster/AudioShutdown"
+  },
+  "license": "MIT",
+  "icon": "assets/AudioShutdown/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+    ]
+  },
+  "mixins": [
+    "AudioShutdown.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.12",
+    "fabric": "*",
+    "minecraft": "1.19.3"
+  }
+}
