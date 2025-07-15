@@ -40,7 +40,7 @@ public abstract class SoundSystemMixin {
         }
 
         //When sound engine is started, and there are no sounds playing and the last started sound was 5 seconds ago OR if the minecraft window is not focused, and the game is paused SHUT THE THING DOWN
-        if(audioShutdown.isEngineRunning() && ((System.currentTimeMillis()-audioShutdown.lastAudioStartTime > 5000 && sources.isEmpty()) || !MinecraftClient.getInstance().isWindowFocused()) && audioShutdown.isGamePaused()) {
+        if(audioShutdown.isEngineRunning() && ((System.currentTimeMillis()-audioShutdown.lastAudioStartTime > 5000 && isSourcesEmptyOrStopped()) || !MinecraftClient.getInstance().isWindowFocused()) && audioShutdown.isGamePaused()) {
             audioShutdown.stopOrPauseEngine();
 
             ci.cancel();
@@ -48,10 +48,20 @@ public abstract class SoundSystemMixin {
         }
 
         //If sounds should be playing and the engine was paused because of window un-focus, restart it if focused again
-        if(!sources.isEmpty() && !audioShutdown.isEngineRunning() && MinecraftClient.getInstance().isWindowFocused() && !audioShutdown.shutdownBecauseOfLowAudioVolume) {
+        if(!isSourcesEmptyOrStopped() && !audioShutdown.isEngineRunning() && MinecraftClient.getInstance().isWindowFocused() && !audioShutdown.shutdownBecauseOfLowAudioVolume) {
             audioShutdown.startOrResumeEngine();
             ci.cancel();
         }
+    }
+
+    @Unique
+    private boolean isSourcesEmptyOrStopped() {
+        if(sources.isEmpty()) return true;
+
+        for(Channel.SourceManager source : sources.values()) {
+            if(source.isStopped()) return false;
+        }
+        return true;
     }
 
 
@@ -62,13 +72,12 @@ public abstract class SoundSystemMixin {
         }
     }
 
-    @Inject(method = "play(Lnet/minecraft/client/sound/SoundInstance;)V", at = @At("HEAD"))
-    public void onPlay(SoundInstance instance, CallbackInfo ci) {
+    @Inject(method = "play(Lnet/minecraft/client/sound/SoundInstance;)Lnet/minecraft/client/sound/SoundSystem$PlayResult;", at = @At("HEAD"))
+    public void onPlay(SoundInstance sound, CallbackInfoReturnable<SoundSystem.PlayResult> cir) {
         if((audioShutdown.hasStoppedBecauseOfAudioShutdown && !audioShutdown.isEngineRunning()) && (MinecraftClient.getInstance().isWindowFocused() || !audioShutdown.isGamePaused())) {
-            if(!audioShutdown.hasStoppedBecauseOfAudioShutdown) {
+            if(!audioShutdown.shutdownBecauseOfLowAudioVolume) {
                 audioShutdown.startOrResumeEngine();
             }
-
         }
         audioShutdown.lastAudioStartTime = System.currentTimeMillis();
     }

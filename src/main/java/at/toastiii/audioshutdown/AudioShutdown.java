@@ -19,7 +19,6 @@ public class AudioShutdown {
 
     public boolean shutdownBecauseOfLowAudioVolume = false;
 
-
     private long capabilityCheckHandle = -1;
     private boolean isCapableOfAudioPause = false;
 
@@ -42,7 +41,7 @@ public class AudioShutdown {
             capabilityCheckHandle = accessor.getDevicePointer();
             isCapableOfAudioPause = ALC.createCapabilities(accessor.getDevicePointer()).ALC_SOFT_pause_device;
 
-            LogManager.getLogger().info("Audio pause capability: " + isCapableOfAudioPause);
+            LogManager.getLogger().info("Audio pause capability: {}", isCapableOfAudioPause);
         }
 
 
