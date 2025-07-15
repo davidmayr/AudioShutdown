@@ -3,6 +3,8 @@ package at.toastiii.audioshutdown;
 import at.toastiii.audioshutdown.mixin.accessor.SoundEngineAccessor;
 import at.toastiii.audioshutdown.mixin.accessor.SoundSystemAccessor;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.GameMenuScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.sound.SoundEngine;
 import net.minecraft.client.sound.SoundSystem;
 import org.apache.logging.log4j.LogManager;
@@ -21,6 +23,7 @@ public class AudioShutdown {
 
     private long capabilityCheckHandle = -1;
     private boolean isCapableOfAudioPause = false;
+    private AudioShutdownConfig config = AudioShutdownConfig.load();
 
     public AudioShutdown(SoundSystem system) {
         this.system = system;
@@ -70,11 +73,19 @@ public class AudioShutdown {
 
     }
 
+    public AudioShutdownConfig getConfig() {
+        return config;
+    }
+
     public boolean isEngineRunning() {
         return ((SoundSystemAccessor)system).getStarted() && !isEnginePaused;
     }
 
     public boolean isGamePaused() {
+        if(config.pauseOnServers && MinecraftClient.getInstance().currentScreen instanceof GameMenuScreen) {
+            return true;
+        }
+
         return MinecraftClient.getInstance().world == null || MinecraftClient.getInstance().isPaused();
     }
 

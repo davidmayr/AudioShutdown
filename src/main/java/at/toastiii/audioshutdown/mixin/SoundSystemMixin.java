@@ -40,7 +40,7 @@ public abstract class SoundSystemMixin {
         }
 
         //When sound engine is started, and there are no sounds playing and the last started sound was 5 seconds ago OR if the minecraft window is not focused, and the game is paused SHUT THE THING DOWN
-        if(audioShutdown.isEngineRunning() && ((System.currentTimeMillis()-audioShutdown.lastAudioStartTime > 5000 && isSourcesEmptyOrStopped()) || !MinecraftClient.getInstance().isWindowFocused()) && audioShutdown.isGamePaused()) {
+        if(audioShutdown.isEngineRunning() && ((System.currentTimeMillis()-audioShutdown.lastAudioStartTime > 5000 && isSourcesEmptyOrStopped()) || !MinecraftClient.getInstance().isWindowFocused()) && (audioShutdown.isGamePaused())) {
             audioShutdown.stopOrPauseEngine();
 
             ci.cancel();
